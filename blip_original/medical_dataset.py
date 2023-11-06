@@ -66,6 +66,11 @@ class generation_train(Dataset):
             image = Image.open(os.path.join(self.image_root, image_path[0])).convert('RGB')
             image = self.transform(image)
 
+        elif self.dataset == 'openi_zh':
+            image = Image.open(os.path.join(self.image_root, image_path[0])).convert('RGB')
+            image = self.transform(image)
+
+
         caption = self.prompt + pre_caption(ann['report'], self.max_words)
 
         knowledge_skg = skg

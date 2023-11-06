@@ -13,38 +13,51 @@ from blip_original import create_loader, create_dataset
 import os
 from transformers import AutoTokenizer, AutoModel
 
+MODEL_BASE_DIR = '/home/qianq/model'
+
 
 
 def main(args, config):
-
+    print('main start')
     torch.manual_seed(args.seed)
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     np.random.seed(args.seed)
 
     # create tokenizer
-
+    print(f'create tokenizer:{args.bert}')
     if args.bert == 'base':
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        tokenizer = BertTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/bert-base-uncased')
     elif args.bert == 'sci':
-        tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
+        tokenizer = AutoTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/allenai/scibert_scivocab_uncased')
     elif args.bert == 'cli':
-        tokenizer = AutoTokenizer.from_pretrained('emilyalsentzer/Bio_ClinicalBERT')
+        tokenizer = AutoTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/emilyalsentzer/Bio_ClinicalBERT')
+    print(f'create tokenizer:{args.bert} finished')
+
     tokenizer.add_special_tokens({'bos_token': '[DEC]'})
     tokenizer.add_special_tokens({'additional_special_tokens': ['[ENC]']})
     tokenizer.enc_token_id = tokenizer.additional_special_tokens_ids[0]
     # tokenizer = BertTokenizer.from_pretrained(args.text_encoder)
     train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
     samplers = [None, None, None]
-    train_dataloader, val_dataloader, test_dataloader = create_loader([train_dataset, val_dataset, test_dataset], samplers,
-                                                            batch_size=[args.batch_size] * 3,
-                                                            num_workers=[4, 4, 4],
-                                                            is_trains=[True, False, False],
-                                                            collate_fns=[None, None, None])
-
-    model = blip_decoder(pretrained=args.pretrained, image_size=config['image_size'], vit=config['vit'],
-                         vit_grad_ckpt=config['vit_grad_ckpt'], vit_ckpt_layer=config['vit_ckpt_layer'],
-                         prompt=config['prompt'], tokenizer=tokenizer, args=args)
+    train_dataloader, val_dataloader, test_dataloader = create_loader(
+        [train_dataset, val_dataset, test_dataset], 
+        samplers,
+        batch_size=[args.batch_size] * 3,
+        num_workers=[4, 4, 4],
+        is_trains=[True, False, False],
+        collate_fns=[None, None, None],
+    )
+    model = blip_decoder(
+        pretrained=args.pretrained, 
+        image_size=config['image_size'], 
+        vit=config['vit'],
+        vit_grad_ckpt=config['vit_grad_ckpt'], 
+        vit_ckpt_layer=config['vit_ckpt_layer'],
+        prompt=config['prompt'], 
+        tokenizer=tokenizer, 
+        args=args
+    )
 
 
     # get function handles of loss and metrics
@@ -86,7 +99,7 @@ if __name__ == '__main__':
                         help='the path to the directory containing the data.')
 
     # Data loader settings
-    parser.add_argument('--dataset_name', type=str, default='iu_xray', choices=['iu_xray', 'mimic_cxr'],
+    parser.add_argument('--dataset_name', type=str, default='iu_xray', choices=['iu_xray', 'mimic_cxr', 'openi_zh'],
                         help='the dataset to be used.')
     parser.add_argument('--max_seq_length', type=int, default=90, help='the maximum sequence length of the reports.')
     parser.add_argument('--threshold', type=int, default=3, help='the cut off frequency for the words.')

@@ -35,6 +35,12 @@ def create_dataset(dataset, args, config):
         test_dataset = generation_eval(transform_test, args.image_dir.split('&')[1], args.ann_path.split('&')[1], 'test', 'mimic_cxr', args=args)
         return train_dataset, val_dataset, test_dataset
     
+    elif dataset == 'generation_openi_zh':
+        train_dataset = generation_train(transform_train, args.image_dir.split('&')[0], args.knowledge_path.split('&')[0], prompt=config['prompt'], dataset='openi_zh', args=args)
+        val_dataset = generation_eval(transform_test, args.image_dir.split('&')[0], args.ann_path.split('&')[0], 'val', 'openi_zh', args=args)
+        test_dataset = generation_eval(transform_test, args.image_dir.split('&')[0], args.ann_path.split('&')[0], 'test', 'openi_zh', args=args)
+        return train_dataset, val_dataset, test_dataset
+    
 def create_sampler(datasets, shuffles, num_tasks, global_rank):
     samplers = []
     for dataset,shuffle in zip(datasets,shuffles):

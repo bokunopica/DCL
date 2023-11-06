@@ -17,13 +17,15 @@ nodes = [
 node_inds = [0,1,2,3,3,4,4,5,5,5,5,6,6,7,7,7,7,7,7,7,7,8,8,8,9,10,10,10]
 node_labels = [0,2,3,1,4,1,5,1,6,6,6,1,7,1,8,8,8,8,8,8,8,1,9,9,10,1,11,11]
 
+MODEL_BASE_DIR = '/home/qianq/model'
+
 def init_tokenizer(args):
     if args.bert == 'base':
-        tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        tokenizer = BertTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/bert-base-uncased')
     elif args.bert == 'sci':
-        tokenizer = AutoTokenizer.from_pretrained('allenai/scibert_scivocab_uncased')
+        tokenizer = AutoTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/allenai/scibert_scivocab_uncased')
     elif args.bert == 'cli':
-        tokenizer = AutoTokenizer.from_pretrained('emilyalsentzer/Bio_ClinicalBERT')
+        tokenizer = AutoTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/emilyalsentzer/Bio_ClinicalBERT')
     tokenizer.add_special_tokens({'bos_token':'[DEC]'})
     tokenizer.add_special_tokens({'additional_special_tokens':['[ENC]']})
     tokenizer.enc_token_id = tokenizer.additional_special_tokens_ids[0]

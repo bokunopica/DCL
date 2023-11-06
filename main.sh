@@ -4,7 +4,7 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 TORCH_DISTRIBUTED_DEBUG=DETAIL python -m torch.dist
     --config ./configs/BLIP.yaml \
     --output_dir output/Generation \
     --dataset_name openi_zh \
-    --distributed True \
+    --distributed False \
     --batch_size 8 \
     --epochs 50 \
     --save_dir results/test \

@@ -38,16 +38,17 @@ def main(args, config):
     tokenizer.add_special_tokens({'additional_special_tokens': ['[ENC]']})
     tokenizer.enc_token_id = tokenizer.additional_special_tokens_ids[0]
     # tokenizer = BertTokenizer.from_pretrained(args.text_encoder)
-    train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
-    samplers = [None, None, None]
-    train_dataloader, val_dataloader, test_dataloader = create_loader(
-        [train_dataset, val_dataset, test_dataset], 
-        samplers,
-        batch_size=[args.batch_size] * 3,
-        num_workers=[4, 4, 4],
-        is_trains=[True, False, False],
-        collate_fns=[None, None, None],
-    )
+    # train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
+    # samplers = [None, None, None]
+    # train_dataloader, val_dataloader, test_dataloader = create_loader(
+    #     [train_dataset, val_dataset, test_dataset], 
+    #     samplers,
+    #     batch_size=[args.batch_size] * 3,
+    #     num_workers=[4, 4, 4],
+    #     is_trains=[True, False, False],
+    #     collate_fns=[None, None, None],
+    # )
+    print('model init start')
     model = blip_decoder(
         pretrained=args.pretrained, 
         image_size=config['image_size'], 
@@ -58,6 +59,8 @@ def main(args, config):
         tokenizer=tokenizer, 
         args=args
     )
+    print('model init end')
+
 
 
     # get function handles of loss and metrics
@@ -69,8 +72,8 @@ def main(args, config):
     lr_scheduler = build_lr_scheduler(args, optimizer)
 
     # build trainer and start to train
-    trainer = Trainer(model, criterion, metrics, optimizer, args, lr_scheduler, train_dataloader, val_dataloader, test_dataloader, tokenizer)
-    trainer.train()
+    # trainer = Trainer(model, criterion, metrics, optimizer, args, lr_scheduler, train_dataloader, val_dataloader, test_dataloader, tokenizer)
+    # trainer.train()
 
 
 if __name__ == '__main__':

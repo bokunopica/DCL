@@ -7,6 +7,8 @@ import copy
 from models.med import BertConfig, BertModel, BertLMHeadModel
 from medical_knowledge.SKG_knowledge import *
 
+MODEL_BASE_DIR = '/home/qianq/model'
+
 class create_knowledge(nn.Module):
     def __init__(self,
                  embed_dim=256,
@@ -49,9 +51,11 @@ class create_knowledge(nn.Module):
         # self.text_encoder = text_encoder
         self.text_proj = text_proj
         self.tokenizer = tokenizer
-        self.knowledge_encoder = BertModel.from_pretrained('allenai/scibert_scivocab_uncased',
-                                                     config=BertConfig.from_json_file('configs/tag_config_sci.json'),
-                                                     add_pooling_layer=False)
+        self.knowledge_encoder = BertModel.from_pretrained(
+            f'{MODEL_BASE_DIR}/allenai/scibert_scivocab_uncased',
+            config=BertConfig.from_json_file('configs/tag_config_sci.json'),
+            add_pooling_layer=False,
+        )
         self.knowledge_encoder.resize_token_embeddings(len(self.tokenizer))
 
         # self.enhanced_visual_proj=nn.Linear(1536, 768)

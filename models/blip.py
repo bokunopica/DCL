@@ -18,22 +18,24 @@ from functools import partial
 from medical_knowledge.knowledge import create_knowledge
 from medical_knowledge.SKG_knowledge import *
 from models.tagencoder import TagEncoder, update_skg
-        
-        
+
+MODEL_BASE_DIR = '/home/qianq/model'
+
 class BLIP_Decoder(nn.Module):
-    def __init__(self,                 
-                 med_config = 'configs/med_config.json',  
-                 image_size = 224,
-                 vit = 'base',
-                 vit_grad_ckpt = False,
-                 vit_ckpt_layer = 0,
-                 prompt = 'a picture of ',
-                 tokenizer = None,
-                 embed_dim = 256,     
-                 queue_size = 65536,
-                 momentum = 0.995,
-                 args = None
-                 ):
+    def __init__(
+            self,                 
+            med_config = 'configs/med_config.json',  
+            image_size = 224,
+            vit = 'base',
+            vit_grad_ckpt = False,
+            vit_ckpt_layer = 0,
+            prompt = 'a picture of ',
+            tokenizer = None,
+            embed_dim = 256,     
+            queue_size = 65536,
+            momentum = 0.995,
+            args = None,
+        ):
         """
         Args:
             med_config (str): path for the mixture of encoder-decoder model's configuration file
@@ -121,14 +123,26 @@ class BLIP_Decoder(nn.Module):
         self.temp = nn.Parameter(0.07*torch.ones([]))   
         
         # create the decoder
-        decoder_config = BertConfig.from_json_file(med_config)
+        # print('------------')
+        # print(med_config)
+        # print('------------')
+        # decoder_config = BertConfig.from_json_file(
+        #     BertConfig.get_config_dict(med_config)
+        # )
+        decoder_config = med_config
+        print('----------')
+        print(med_config)
+        print(decoder_config.encoder_width)
+        decoder_config.vocab_size = 31090
+        print(vision_width)
+        print('----------')
         decoder_config.encoder_width = vision_width
         if args.bert == 'base':
-            self.text_decoder = BertLMHeadModel.from_pretrained('bert-base-uncased',config=decoder_config)
+            self.text_decoder = BertLMHeadModel.from_pretrained(f'{MODEL_BASE_DIR}/bert-base-uncased',config=decoder_config)
         elif args.bert == 'sci':
-            self.text_decoder = BertLMHeadModel.from_pretrained('allenai/scibert_scivocab_uncased',config=decoder_config)
+            self.text_decoder = BertLMHeadModel.from_pretrained(f'{MODEL_BASE_DIR}/allenai/scibert_scivocab_uncased',config=decoder_config)
         elif args.bert == 'cli':
-            self.text_decoder = BertLMHeadModel.from_pretrained('emilyalsentzer/Bio_ClinicalBERT',config=decoder_config)
+            self.text_decoder = BertLMHeadModel.from_pretrained(f'{MODEL_BASE_DIR}/emilyalsentzer/Bio_ClinicalBERT',config=decoder_config)
         self.text_decoder.resize_token_embeddings(len(self.tokenizer))
         tie_encoder_decoder_weights(self.text_encoder,self.text_decoder.bert,'','/attention')
 
@@ -496,7 +510,7 @@ class BLIP_Decoder(nn.Module):
 def blip_decoder(pretrained='',**kwargs):
     model = BLIP_Decoder(**kwargs)
     if pretrained:
-        model,msg = load_checkpoint(model,pretrained)
+        model, msg = load_checkpoint(model,pretrained)
     return model    
     
 def init_tokenizer(args):

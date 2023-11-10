@@ -8,5 +8,9 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 TORCH_DISTRIBUTED_DEBUG=DETAIL python -m torch.dist
     --batch_size 8 \
     --epochs 50 \
     --save_dir results/test \
-    --bert sci
+    --bert sci \
+    --image_dir /home/qianq/data/OpenI-zh/images \
+    --knowledge_path /home/qianq/mycodes/DCL/annotations/openi_zh.json \
+    --ann_path /home/qianq/mycodes/DCL/annotations/openi_zh.json
+    
     # --master_port=21073 \

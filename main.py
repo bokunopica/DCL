@@ -37,8 +37,8 @@ def main(args, config):
     tokenizer.add_special_tokens({'bos_token': '[DEC]'})
     tokenizer.add_special_tokens({'additional_special_tokens': ['[ENC]']})
     tokenizer.enc_token_id = tokenizer.additional_special_tokens_ids[0]
-    # tokenizer = BertTokenizer.from_pretrained(args.text_encoder)
-    # train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
+    tokenizer = BertTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/{args.text_encoder}')
+    train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
     # samplers = [None, None, None]
     # train_dataloader, val_dataloader, test_dataloader = create_loader(
     #     [train_dataset, val_dataset, test_dataset], 
@@ -50,14 +50,14 @@ def main(args, config):
     # )
     print('model init start')
     model = blip_decoder(
-        pretrained=args.pretrained, 
-        image_size=config['image_size'], 
+        pretrained=args.pretrained,
+        image_size=config['image_size'],
         vit=config['vit'],
-        vit_grad_ckpt=config['vit_grad_ckpt'], 
+        vit_grad_ckpt=config['vit_grad_ckpt'],
         vit_ckpt_layer=config['vit_ckpt_layer'],
-        prompt=config['prompt'], 
-        tokenizer=tokenizer, 
-        args=args
+        prompt=config['prompt'],
+        tokenizer=tokenizer,
+        args=args,
     )
     print('model init end')
 

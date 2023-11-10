@@ -36,7 +36,6 @@ skg = {'nodes':nodes, 'node_inds':node_inds, 'node_labels':node_labels, 'node_re
 
 class generation_train(Dataset):
     def __init__(self, transform, image_root, ann_root, max_words=90, prompt='', dataset='', args=None):
-        
         self.annotation = json.load(open(os.path.join(ann_root),'r'))
         # self.ann = self.annotation['train']
         self.ann = self.annotation

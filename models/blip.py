@@ -130,12 +130,7 @@ class BLIP_Decoder(nn.Module):
         #     BertConfig.get_config_dict(med_config)
         # )
         decoder_config = med_config
-        print('----------')
-        print(med_config)
-        print(decoder_config.encoder_width)
         decoder_config.vocab_size = 31090
-        print(vision_width)
-        print('----------')
         decoder_config.encoder_width = vision_width
         if args.bert == 'base':
             self.text_decoder = BertLMHeadModel.from_pretrained(f'{MODEL_BASE_DIR}/bert-base-uncased',config=decoder_config)

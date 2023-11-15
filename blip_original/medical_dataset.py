@@ -37,8 +37,8 @@ skg = {'nodes':nodes, 'node_inds':node_inds, 'node_labels':node_labels, 'node_re
 class generation_train(Dataset):
     def __init__(self, transform, image_root, ann_root, max_words=90, prompt='', dataset='', args=None):
         self.annotation = json.load(open(os.path.join(ann_root),'r'))
-        # self.ann = self.annotation['train']
-        self.ann = self.annotation
+        self.ann = self.annotation['train']
+        # self.ann = self.annotation
         self.transform = transform
         self.image_root = image_root
         self.max_words = max_words      
@@ -66,7 +66,12 @@ class generation_train(Dataset):
             image = self.transform(image)
 
         elif self.dataset == 'openi_zh':
-            image = Image.open(os.path.join(self.image_root, image_path[0])).convert('RGB')
+            # print('---------------------')
+            # print(ann)
+            # print(self.image_root)
+            # print(image_path[0])
+            # print('---------------------')
+            image = Image.open(image_path).convert('RGB')
             image = self.transform(image)
 
 

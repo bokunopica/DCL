@@ -141,9 +141,14 @@ class BLIP_Decoder(nn.Module):
         self.text_decoder.resize_token_embeddings(len(self.tokenizer))
         tie_encoder_decoder_weights(self.text_encoder,self.text_decoder.bert,'','/attention')
 
-        self.create_knowledge = create_knowledge(embed_dim=embed_dim, queue_size=queue_size,
-                                                 text_encoder=self.text_encoder, text_proj=self.text_proj,
-                                                 tokenizer=self.tokenizer, args=args)
+        self.create_knowledge = create_knowledge(
+            embed_dim=embed_dim, 
+            queue_size=queue_size,
+            text_encoder=self.text_encoder, 
+            text_proj=self.text_proj,
+            tokenizer=self.tokenizer, 
+            args=args,
+        )
 
         
         

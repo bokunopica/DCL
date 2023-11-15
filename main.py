@@ -39,15 +39,15 @@ def main(args, config):
     tokenizer.enc_token_id = tokenizer.additional_special_tokens_ids[0]
     tokenizer = BertTokenizer.from_pretrained(f'{MODEL_BASE_DIR}/{args.text_encoder}')
     train_dataset, val_dataset, test_dataset = create_dataset('generation_%s'%args.dataset_name, args, config)
-    # samplers = [None, None, None]
-    # train_dataloader, val_dataloader, test_dataloader = create_loader(
-    #     [train_dataset, val_dataset, test_dataset], 
-    #     samplers,
-    #     batch_size=[args.batch_size] * 3,
-    #     num_workers=[4, 4, 4],
-    #     is_trains=[True, False, False],
-    #     collate_fns=[None, None, None],
-    # )
+    samplers = [None, None, None]
+    train_dataloader, val_dataloader, test_dataloader = create_loader(
+        [train_dataset, val_dataset, test_dataset], 
+        samplers,
+        batch_size=[args.batch_size] * 3,
+        num_workers=[4, 4, 4],
+        is_trains=[True, False, False],
+        collate_fns=[None, None, None],
+    )
     print('model init start')
     model = blip_decoder(
         pretrained=args.pretrained,
@@ -72,8 +72,8 @@ def main(args, config):
     lr_scheduler = build_lr_scheduler(args, optimizer)
 
     # build trainer and start to train
-    # trainer = Trainer(model, criterion, metrics, optimizer, args, lr_scheduler, train_dataloader, val_dataloader, test_dataloader, tokenizer)
-    # trainer.train()
+    trainer = Trainer(model, criterion, metrics, optimizer, args, lr_scheduler, train_dataloader, val_dataloader, test_dataloader, tokenizer)
+    trainer.train()
 
 
 if __name__ == '__main__':
@@ -179,8 +179,7 @@ if __name__ == '__main__':
     parser.add_argument('--bert', type=str, default='base', choices=['base', 'sci', 'cli'],
                         help='the dataset to be used.')
     parser.add_argument('--concat', default=False, type=bool)
+    parser.add_argument('--task', type=str, default="pretrain", help='pretrain or retrieval')
     args = parser.parse_args()
-
     config = yaml.load(open(args.config, 'r'), Loader=yaml.Loader)
-
     main(args, config)

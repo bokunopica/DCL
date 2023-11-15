@@ -14,7 +14,7 @@ def preprocess_openi_zh_pa(save_dir):
         result_list.append({
             "image_path": f"{image_dir}/{item['image_id']}.png",
             "report": item['caption'],
-            "triplet": []
+            "triplets": []
         })
 
     random.shuffle(result_list)
